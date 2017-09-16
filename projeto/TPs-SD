@@ -1,0 +1,60 @@
+TPs-SD
+Anterior: 1. IntroduçãoSair do livro
+Implementação de um serviço de consultas a um Log distribuído 
+
+O Trabalho Prático 1 a ser realizado na disciplina de SD consiste no projeto e implementação de um serviço de log distribuído. Este documento especifica os requisitos do serviço. 
+
+1.Cronograma e Valor
+
+O trabalho vale 10 pontos no total. Ele deverá ser entregue até o dia 20 de setembro.
+
+2.Regras
+
+• O trabalho poderá ser realizado em equipes de até 4 alunos(as).
+• A implementação deverá ser realizada em C/C++ ou Go.
+• A organização do relatório será considerada para fins de avaliação.
+• A tolerância para entrega com atraso é de 3 dias, com perda de 20% da nota inicial por dia.
+• Os trabalhos somente serão recebidos via Ava.
+
+3.Código de honra
+
+•  Já que não faz sentido copiar código de outro aluno, pois a idéia é trabalhar para aprender, trabalhos total ou parcialmente iguais a projetos apresentados por outros alunos (inclusive em semestres anteriores) receberão avaliação nula (exceto se for o trabalho do próprio aluno). Para isto serão executados testes automáticos sobre o código entregue.
+• A professora poderá realizar arguição com os alunos a respeito do trabalho elaborado. Nesse caso, a professora agendará um horário de classe para a apresentação do trabalho pelo grupo 
+
+
+4. Problema
+
+Depuração em Sistemas Distribuídos é maioritariamente baseada em Logs. Cada máquina cria um ou mais arquivos locais nos quais acumula mensagens de status, de erro e qualquer coisa que for relevante. Esses logs podem ser consultados remotamente.
+Na indústria, para garantir que o programa faz o que a gente quer se usam testes de unidade (Unit Tests). Um Unit Test é um trecho de código que chama uma pequena unidade, tipicamente um pequeno módulo, e automaticamente verifica que ele produz as saídas desejadas para entradas apropriadas. Espera-se que eles explorem a maior parte dos caminhos possíveis no código. Eles devem executar sem intervenção humana.
+Neste trabalho vocês irão:
+Escrever um programa que permita consultar arquivos de log distribuídos em múltiplos computadores, desde qualquer um deles.
+Usar N>3 máquinas virtuais, cada uma gerando um arquivo de log (maquina.i.log), onde i é o identificador da máquina.
+Após abrir um terminal em qualquer uma dessas máquinas você será capaz de executar um comando grep (com opções suficientes para fazê-lo usável, inclusive a opção --help, e expressões regulares) que executa em todos os arquivos de log em todas as máquinas e produz a saída no seu terminal (com as linhas apropriadas para especificar de qual log foram extraídas).
+Para criar os logs pode usar qualquer função disponível localmente.
+Para saber que o programa funciona você deve criar unit tests distribuídos (pode usar um framework de testes como o googletest se desejar), incluindo:
+Criação de um arquivo de log nas máquinas com algumas linhas predefinidas e chamadas ao programa de consultas de log para verificar que a saída de múltiplos greps coincide com o esperado.
+Assuma que máquinas podem falhar, mas nesse caso elas não voltam a executar. Dessa forma, seu programa somente pedirá respostas de máquinas que não tiverem falhado
+Os testes devem ser executados entre máquinas conectadas através da rede (e não somente máquinas virtuais coalocadas no mesmo computador). Vocês podem utilizar seus computadores ou serviços na nuvem ou máquinas disponíveis nos laboratórios do CEFET.
+-Este programa será usado nos trabalhos seguintes. Projetem ele com carinho.
+5.O que entregar
+
+Nesse TP deverão ser entregues via Moodle:
+Código fonte
+README: como compilar e executar.
+Relatório contendo:
+Projeto do programa (Qual a abordagem de comunicação usada e por que, comparação com alternativas possíveis).  Não deve-se incluir a listagem do código fonte no relatório exceto trechos de código que a equipe considere relevantes para a explicação.
+Formato das mensagens
+Descrição breve dos unit tests e o quê eles verificam.
+Resultados dos testes especificados.
+Avaliação de desempenho: Latência média das consultas para arquivos de 100MB em 4 máquinas.
+
+Lembre que a organização do relatório será considerada para fins de avaliação.
+
+6.Avaliação (10 pontos)
+
+- 40% execução correta do programa e testes
+- 40% Relatório: projeto e desempenho
+- 20% Qualidade do texto e conclusões da equipe
+Trabalhos diferentes do especificado não serão avaliados
+Dúvidas? Poste-as no Moodle!!
+Bom trabalho!
