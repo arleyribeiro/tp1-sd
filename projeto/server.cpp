@@ -11,20 +11,13 @@
 #include <bits/stdc++.h>
  using namespace std;
 
- char* upString(char *msg) {
-    int t = strlen(msg);
-    for(int i=0; i<t; i++) {
-        if(msg[i]>=97 && msg[i] <=122 ) {
-            printf("%c\n", msg[i] );
-            msg[i] = (msg[i]-32);
-        }
-    }
- }
+ char* upString(char *msg);
+ void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
-    char client_message[2000];
+    char client_message[50000];
      
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -65,8 +58,11 @@ int main(int argc , char *argv[]) {
     while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 ) {
         //Send the message back to client
         cout <<"Client Command: " <<client_message<< endl;
+        
+        strcat(client_message, " > arquivo.txt");
         system(client_message);
-         
+        readFile("arquivo.txt", client_message);
+
         write(client_sock , client_message , strlen(client_message));
 
         memset(client_message,0,2000);
@@ -81,4 +77,27 @@ int main(int argc , char *argv[]) {
     }
      
     return 0;
+}
+
+ char* upString(char *msg) {
+    int t = strlen(msg);
+    for(int i=0; i<t; i++) {
+        if(msg[i]>=97 && msg[i] <=122 ) {
+            msg[i] = (msg[i]-32);
+        }
+    }
+ }
+
+void readFile(char *name, char *res) {
+    int c;
+    FILE *file;
+    file = fopen(name, "r");
+    if (file) {
+        string aux;
+        while ((c = getc(file)) != EOF){
+            aux+=c;
+        }
+        strcpy(res, aux.c_str());
+        fclose(file);
+    }
 }

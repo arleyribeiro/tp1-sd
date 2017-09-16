@@ -1,0 +1,23 @@
+Binary file client matches
+multi-server.cpp:    C socket server example, handles multiple clients using threads
+multi-server.cpp:    gcc server.c -lpthread -o server
+multi-server.cpp:#include <pthread.h> //for threading , link with lpthread
+multi-server.cpp://the thread function
+multi-server.cpp:    pthread_t thread_id;
+multi-server.cpp:        if( pthread_create( &thread_id , NULL ,  connection_handler , (void*) &client_sock) < 0) {
+multi-server.cpp:            perror("could not create thread");
+multi-server.cpp:        //Now join the thread , so that we dont terminate before the thread
+multi-server.cpp:        //pthread_join( thread_id , NULL);
+multi-server.cpp:    int read_size;
+multi-server.cpp:    while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 ) {
+multi-server.cpp:        client_message[read_size] = '\0';
+multi-server.cpp:    if(read_size == 0) {
+multi-server.cpp:    else if(read_size == -1) {
+Binary file server matches
+server.cpp: void readFile(char *name, char *res);
+server.cpp:    int socket_desc , client_sock , c , read_size;
+server.cpp:    while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 ) {
+server.cpp:        readFile("arquivo.txt", client_message);
+server.cpp:    if(read_size == 0) {
+server.cpp:    else if(read_size == -1) {
+server.cpp:void readFile(char *name, char *res) {
