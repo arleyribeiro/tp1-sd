@@ -11,11 +11,15 @@
 #include <arpa/inet.h> //inet_addr
 #include <unistd.h>    //write
 #include <pthread.h> //for threading , link with lpthread
- 
+#include <bits/stdc++.h>
+
 using namespace std;
 
 //the thread function
 void *connection_handler(void *);
+
+
+void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
     int socket_desc , client_sock , c;
@@ -44,10 +48,11 @@ int main(int argc , char *argv[]) {
     //Listen
     listen(socket_desc , 3);
      
+     /*
     //Accept and incoming connection
     puts("Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
-     
+     */
      
     //Accept and incoming connection
     puts("Waiting for incoming connections...");
@@ -82,19 +87,18 @@ void *connection_handler(void *socket_desc) {
     //Get the socket descriptor
     int sock = *(int*)socket_desc;
     int read_size;
-    char *message , client_message[2000];
-     
-    //Send some messages to the client
-    message = "Greetings! I am your connection handler\n";
-    write(sock , message , strlen(message));
-     
-    message = "Now type something and i shall repeat what you type \n";
-    write(sock , message , strlen(message));
+    char *message , client_message[5000];
      
     //Receive a message from client
     while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 ) {
         //end of string marker
         client_message[read_size] = '\0';
+
+        cout <<"Client Command: " <<client_message<< endl;
+        
+        strcat(client_message, " > arquivo.txt");
+        system(client_message);
+        readFile("arquivo.txt", client_message);
         
         //Send the message back to client
         write(sock , client_message , strlen(client_message));
@@ -113,3 +117,17 @@ void *connection_handler(void *socket_desc) {
          
     return 0;
 } 
+
+void readFile(char *name, char *res) {
+    int c;
+    FILE *file;
+    file = fopen(name, "r");
+    if (file) {
+        string aux;
+        while ((c = getc(file)) != EOF){
+            aux+=c;
+        }
+        strcpy(res, aux.c_str());
+        fclose(file);
+    }
+}
