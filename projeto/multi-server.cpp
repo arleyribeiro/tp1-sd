@@ -19,6 +19,8 @@ using namespace std;
 void *connection_handler(void *);
 
 void readFile(char *name, char *res);
+
+char* fileName (char* fileName, int min_str );
  
 int main(int argc , char *argv[]) {
 
@@ -26,7 +28,7 @@ int main(int argc , char *argv[]) {
         printf("Usage: ./server PORT\n");
         exit (EXIT_FAILURE);
     }
-    
+
     int socket_desc , client_sock , c;
     struct sockaddr_in server , client;
 
@@ -81,29 +83,35 @@ int main(int argc , char *argv[]) {
     return 0;
 }
  
-/*
- * This will handle connection for each client
- * */
 void *connection_handler(void *socket_desc) {
     //Get the socket descriptor
     int sock = *(int*)socket_desc;
     int read_size;
-    char *message , client_message[5000];
-     
+    char *message , client_message[5000], redirect[30] = " 1>stdout.txt 2>stderr.txt";
+
+    
     //Receive a message from client
     while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 ) {
         //end of string marker
         client_message[read_size] = '\0';
 
-        cout <<"Client Command: " <<client_message << " " << sock<< endl;
-    
-        strcat(client_message, " > arquivo.txt");
-        system(client_message);
-        readFile("arquivo.txt", client_message);
+        cout << "Client Command: " << client_message << endl;
+       
+        strcat(client_message, redirect);
+
+        int sys = system(client_message);
+        if(!sys)
+            readFile("stdout.txt", client_message);
+        else
+            readFile("stderr.txt", client_message);
         
         //Send the message back to client
         write(sock , client_message , strlen(client_message));
-        
+
+        //delete file
+        system("rm stdout.txt");
+        system("rm stderr.txt");
+
         //clear the message buffer
         memset(client_message, 0, 2000);
     }
@@ -133,4 +141,25 @@ void readFile(char *name, char *res) {
         strcpy(res, aux.c_str());
         fclose(file);
     }
+}
+
+
+char* fileName (char* fileName, int min_str ) {
+
+    srand ( time(NULL ));
+    string chars = "aLMvwxfghijbcdelmnQRSTUVFGHpqrstuIJKkyzNOP234567WXYZ01oABCSED89";
+    string chars2 = "eMvwxf567WD8JKky9lmghijbcdZCSEz01RSTUVFGHpnQqrstuIoABNOP234XYaL";
+    string name;
+
+    int nt = chars.size();
+    int str;
+    
+    str = (rand() % min_str );
+    str += ( str < min_str ) ? min_str : 0;
+
+        
+    for (int i = 0; i < str; i++ ) 
+        name = (rand()%2) ? name += chars[ rand() % nt ] : name += chars2[ rand() % nt ];
+    name+=".txt";
+    strcpy(fileName, name.c_str());
 }

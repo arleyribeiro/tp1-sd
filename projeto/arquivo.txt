@@ -1,10 +1,14 @@
+a.out
 arquivo.txt
+b.cpp
 client
 client.cpp
 links
+log
 multi-server.cpp
 server
 server.cpp
 servidores.txt
+test2.cpp
 test.cpp
 TPs-SD

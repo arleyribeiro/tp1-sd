@@ -3,36 +3,16 @@
 #define MAXN 100
 using namespace std;
 
-void readFile(char *name, vector< pair<char*, int> > &servers) {
-    char IP[25], cmd[25];
-    int PORT, i=0;
-
-    FILE *file;  
-    file = fopen(name, "r");
-    if (file) {
-        string aux;
-        while(fscanf(file, "%s %d", IP, &PORT) != EOF){
-            servers.push_back(make_pair(IP, PORT));
-            cout << IP << " " << PORT << endl;
-        }
-        fclose(file);
-        dup2(0, 3);
-    }
-}
 
 int main(int argc , char *argv[]) {
-    char IP[25], cmd[25];
-    int PORT, i=0;
+    char cmd[100] = "ls &> arquivo.txt";  
+    int sys = system("ls 1>stdout.txt 2>stderr.txt");
+     //delete file
+        char rm[50]="rm ";
+        (!sys) ? strcat(rm, " stdout.txt") : strcat(rm, " stderr.txt");
+        
+        system(rm);
 
-    vector< pair<char*, int> > servers;
-    pair<char*, int> host;
-    
-    readFile(argv[1], servers);
-    string aux;
-    cout <<"Tamanho: " << servers.size() << endl;
-    printf("Enter command:");
-    dup2(0,0);
-    cin >> aux;
-    cout << aux << endl;    
     return 0;
 }
+
