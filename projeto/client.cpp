@@ -3,6 +3,7 @@
 #include <sys/socket.h>   
 #include <arpa/inet.h> 
 #include <unistd.h>
+#include <sys/time.h>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -22,7 +23,7 @@ int main(int argc , char *argv[]) {
     struct sockaddr_in server;
     char cmd[1000], IP[25], server_reply[10000];
     string aux;
-
+    clock_t t1, t2;
     pair<char*, int> host;
     vector< pair<char*, int> > servers; //servers that will connected
 
@@ -72,7 +73,8 @@ int main(int argc , char *argv[]) {
             }
              
             puts("Connected\n");
-                        
+            
+            t1 = clock();
             if( send(sock , cmd , strlen(cmd) , 0) < 0) {
                 puts("Send failed");
                 return 1;
@@ -83,12 +85,15 @@ int main(int argc , char *argv[]) {
                 puts("recv failed");
                 break;
             }
-             
+            t2 = clock();
+            
+            double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
             puts("Server reply :");
             cout << server_reply << endl;
             memset(server_reply,0,2000);
              
             close(sock);
+            cout << "Latency time: " << timeT <<"s"<< endl;
         }
     }
 
