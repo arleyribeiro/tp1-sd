@@ -52,13 +52,7 @@ int main(int argc , char *argv[]) {
      
     //Listen
     listen(socket_desc , 3);
-     
-     /*
-    //Accept and incoming connection
-    puts("Waiting for incoming connections...");
-    c = sizeof(struct sockaddr_in);
-     */
-     
+          
     //Accept and incoming connection
     puts("Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
@@ -121,7 +115,6 @@ void *connection_handler(void *socket_desc) {
     }
 
     close(sock);
-    free(socket_desc);
          
     return 0;
 } 

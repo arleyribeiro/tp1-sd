@@ -1,1 +1,0 @@
-arquivo.txt  client  client.cpp  multi-server.cpp  server  server.cpp  TPs-SD
