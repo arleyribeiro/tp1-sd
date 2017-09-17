@@ -23,6 +23,12 @@ void readFile(char *name, char *res);
 int main(int argc , char *argv[]) {
     int socket_desc , client_sock , c;
     struct sockaddr_in server , client;
+
+    if(argc < 2) {
+        printf("Usage: ./server PORT\n");
+        exit (EXIT_FAILURE);
+    }
+    int port = atoi(argv[1]);
      
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -34,7 +40,7 @@ int main(int argc , char *argv[]) {
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons( 8888 );
+    server.sin_port = htons( port );
      
     //Bind
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0) {
@@ -114,7 +120,7 @@ void *connection_handler(void *socket_desc) {
         perror("recv failed");
     }
 
-    close(sock)
+    close(sock);
     free(socket_desc);
          
     return 0;
