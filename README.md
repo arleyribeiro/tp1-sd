@@ -21,24 +21,26 @@ Para executar siga os passos abaixo:
 Navegue até a pasta projeto
 
 Execute o servidor no terminal de cada máquina com um número de porta diferente.
-´´´
-g++ multi-server.cpp -lpthread -o server
-./server PORTA
-´´´
+
+`$ g++ multi-server.cpp -lpthread -o server`
+
+`$ ./server PORTA`
+
 Adicione o IP e PORTA do servido em um arquivo.txt, sendo um servidor por linha.
 
-´´´
-127.0.0.1 8880
-127.0.0.1 8881
-127.0.0.1 8882
+```
+127.0.0.1 8880 
+127.0.0.1 8881 
+127.0.0.1 8882 
 127.0.0.1 8883
-127.0.0.1 8884
-´´´
+127.0.0.1 8884 
+```
+
 Em outro terminal execute o cliente.
-´´´
-g++ client.cpp -o client
-./client lista_de_servidores.txt
-´´´
+
+`$ g++ client.cpp -o client`
+
+`$./client lista_de_servidores.txt`
 
 ## 4 Resultados
 
