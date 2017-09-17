@@ -20,12 +20,13 @@ int main(int argc , char *argv[]) {
 
     int sock, PORT;
     struct sockaddr_in server;
-    char cmd[1000], IP[25], server_reply[2000];
+    char cmd[1000], IP[25], server_reply[10000];
     string aux;
-    pair<char*, int> host;
-    vector< pair<char*, int> > servers;
 
-    //create servers
+    pair<char*, int> host;
+    vector< pair<char*, int> > servers; //servers that will connected
+
+    //read servers of the file
     FILE *file;  
     file = fopen(argv[1], "r");
     if (file) {

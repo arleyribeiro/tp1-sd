@@ -1,21 +1,16 @@
-/*
-    C socket server example, handles multiple clients using threads
-    Compile
-    gcc server.c -lpthread -o server
-*/
- 
+
 #include <stdio.h>
-#include <string.h>    //strlen
-#include <stdlib.h>    //strlen
+#include <string.h> 
+#include <stdlib.h> 
 #include <sys/socket.h>
-#include <arpa/inet.h> //inet_addr
-#include <unistd.h>    //write
-#include <pthread.h> //for threading , link with lpthread
+#include <arpa/inet.h> 
+#include <unistd.h>   
+#include <pthread.h> 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-//the thread function
+
 void *connection_handler(void *);
 
 void readFile(char *name, char *res);
@@ -72,7 +67,7 @@ int main(int argc , char *argv[]) {
          
         //Now join the thread , so that we dont terminate before the thread
         pthread_join( thread_id , NULL);
-        puts("Handler assigned");
+        puts("Handler assigned\n");
     }
      
     if (client_sock < 0) {
@@ -84,36 +79,36 @@ int main(int argc , char *argv[]) {
 }
  
 void *connection_handler(void *socket_desc) {
-    //Get the socket descriptor
+   
     int sock = *(int*)socket_desc;
     int read_size;
-    char *message , client_message[5000], redirect[30] = " 1>stdout.txt 2>stderr.txt";
+    char serverReply[10000] , client_cmd[5000], redirect[30] = " 1>stdout.txt 2>stderr.txt";
 
     
     //Receive a message from client
-    while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 ) {
-        //end of string marker
-        client_message[read_size] = '\0';
+    while( (read_size = recv(sock , client_cmd , 2000 , 0)) > 0 ) {
+        
+        client_cmd[read_size] = '\0';
 
-        cout << "Client Command: " << client_message << endl;
+        cout << "Client Command: " << client_cmd << endl;
        
-        strcat(client_message, redirect);
+        //concat client cmd and redirect
+        strcat(client_cmd, redirect);
 
-        int sys = system(client_message);
-        if(!sys)
-            readFile("stdout.txt", client_message);
-        else
-            readFile("stderr.txt", client_message);
+        int sys = system(client_cmd);
+        //define which file will read
+        (!sys) ? readFile("stdout.txt", serverReply) : readFile("stderr.txt", serverReply);
         
         //Send the message back to client
-        write(sock , client_message , strlen(client_message));
+        write(sock , serverReply , strlen(serverReply));
 
         //delete file
         system("rm stdout.txt");
         system("rm stderr.txt");
 
         //clear the message buffer
-        memset(client_message, 0, 2000);
+        memset(client_cmd, 0, 5000);
+        memset(serverReply, 0, 10000);
     }
      
     if(read_size == 0) {
