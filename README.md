@@ -22,7 +22,7 @@ Navegue até a pasta projeto
 
 Execute o servidor no terminal de cada máquina com um número de porta diferente.
 
-`$ g++ multi-server.cpp -lpthread -o server`
+`$ g++ multi-server.cpp -w -lpthread -o server`
 
 `$ ./server PORTA`
 
