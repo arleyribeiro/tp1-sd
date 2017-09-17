@@ -21,13 +21,15 @@ void *connection_handler(void *);
 void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
-    int socket_desc , client_sock , c;
-    struct sockaddr_in server , client;
 
     if(argc < 2) {
         printf("Usage: ./server PORT\n");
         exit (EXIT_FAILURE);
     }
+    
+    int socket_desc , client_sock , c;
+    struct sockaddr_in server , client;
+
     int port = atoi(argv[1]);
      
     //Create socket

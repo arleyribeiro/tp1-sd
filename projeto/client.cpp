@@ -1,36 +1,41 @@
-#include <stdio.h> //printf
-#include <string.h>    //strlen
-#include <sys/socket.h>    //socket
-#include <arpa/inet.h> //inet_addr
+#include <stdio.h> 
+#include <string.h>   
+#include <sys/socket.h>   
+#include <arpa/inet.h> 
 #include <unistd.h>
 #include <bits/stdc++.h>
 
-
 using namespace std;
 
-int createSocket(int *sock) {
-    
-    *sock = socket(AF_INET , SOCK_STREAM , 0);
-    if (*sock == -1) {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
-}
+void createServers(char *name, vector< pair<char*, int> > &servers);
+
+int createSocket(int *sock); 
 
 int main(int argc , char *argv[]) {
-    int sock;
+
+    if(argc < 2) {
+        printf("Usage: ./client list_of_servers.txt\n");
+        exit (EXIT_FAILURE);
+    }
+
+    int sock, PORT;
     struct sockaddr_in server;
-    char cmd[1000] , server_reply[2000];
+    char cmd[1000], IP[25], server_reply[2000];
     string aux;
     pair<char*, int> host;
     vector< pair<char*, int> > servers;
 
-    host.first = "127.0.0.1";
-    
     //create servers
-    for(int i=8880, j=0; i<8890; i++, j++) {        
-        host.second = i;
-        servers.push_back(host);        
+    FILE *file;  
+    file = fopen(argv[1], "r");
+    if (file) {
+        string aux;
+        while(fscanf(file, "%s %d", IP, &PORT) != EOF){
+            host.first = IP;
+            host.second = PORT;
+            servers.push_back(host);
+        }
+        fclose(file);
     }
 
     while(1) {
@@ -41,7 +46,6 @@ int main(int argc , char *argv[]) {
         if(aux =="exit2")
             break;
 
-        cout << aux << endl;
         strcpy(cmd, aux.c_str());
         cout << cmd << endl;
 
@@ -55,14 +59,12 @@ int main(int argc , char *argv[]) {
             //clear structs
             bzero((char *) &server, sizeof(server));
 
-
             server.sin_addr.s_addr = inet_addr( servers[i].first );
             server.sin_family = AF_INET;
             server.sin_port = htons( servers[i].second );
          
             //Connect to remote server
             if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
-                cout << servers[i].second << endl;
                 perror("Connect failed with server. Error\n");
                 continue;//accepts server failure
                 //return 1;
@@ -90,4 +92,34 @@ int main(int argc , char *argv[]) {
     }
 
     return 0;
+}
+
+/*não está funcionando a passagem do IP está bugada*/
+void createServers(char *name, vector< pair<char*, int> > &servers) {
+    char IP[25], cmd[25];
+    int PORT, i=0;
+    pair<char*, int> host;
+    FILE *file;  
+    file = fopen(name, "r");
+    if (file) {
+        string aux;
+        while(fscanf(file, "%s %d", IP, &PORT) != EOF){
+            host.first = IP;
+            host.second = PORT;
+            servers.push_back(host);
+            cout <<"server " <<  servers[i].first << " ip " <<servers[i].second << endl;
+            i++;
+        }
+        fclose(file);
+        dup2(0, 3);
+    }
+}
+
+int createSocket(int *sock) {
+    
+    *sock = socket(AF_INET , SOCK_STREAM , 0);
+    if (*sock == -1) {
+        printf("Could not create socket");
+    }
+    puts("Socket created");
 }

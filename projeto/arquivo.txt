@@ -1,0 +1,10 @@
+arquivo.txt
+client
+client.cpp
+links
+multi-server.cpp
+server
+server.cpp
+servidores.txt
+test.cpp
+TPs-SD
