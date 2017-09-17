@@ -18,7 +18,6 @@ using namespace std;
 //the thread function
 void *connection_handler(void *);
 
-
 void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
@@ -68,7 +67,7 @@ int main(int argc , char *argv[]) {
         }
          
         //Now join the thread , so that we dont terminate before the thread
-        //pthread_join( thread_id , NULL);
+        pthread_join( thread_id , NULL);
         puts("Handler assigned");
     }
      
@@ -94,8 +93,8 @@ void *connection_handler(void *socket_desc) {
         //end of string marker
         client_message[read_size] = '\0';
 
-        cout <<"Client Command: " <<client_message<< endl;
-        
+        cout <<"Client Command: " <<client_message << " " << sock<< endl;
+    
         strcat(client_message, " > arquivo.txt");
         system(client_message);
         readFile("arquivo.txt", client_message);
@@ -114,6 +113,9 @@ void *connection_handler(void *socket_desc) {
     else if(read_size == -1) {
         perror("recv failed");
     }
+
+    close(sock)
+    free(socket_desc);
          
     return 0;
 } 

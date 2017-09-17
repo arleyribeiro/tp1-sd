@@ -1,10 +1,1 @@
-total 60
-drwxr-xr-x 2 arley arley  4096 Sep 16 20:42 .
-drwxr-xr-x 5 arley arley  4096 Sep  9 16:51 ..
--rw-r--r-- 1 arley arley     0 Sep 16 20:43 arquivo.txt
--rwxr-xr-x 1 arley arley 14771 Sep 16 20:24 client
--rw-r--r-- 1 arley arley  1541 Sep 16 19:41 client.cpp
--rw-r--r-- 1 arley arley  3405 Sep 16 20:42 multi-server.cpp
--rwxr-xr-x 1 arley arley 15006 Sep 16 20:42 server
--rw-r--r-- 1 arley arley  2552 Sep 16 20:22 server.cpp
--rw-r--r-- 1 arley arley  4586 Sep 16 14:05 TPs-SD
+arquivo.txt  client  client.cpp  multi-server.cpp  server  server.cpp  TPs-SD
