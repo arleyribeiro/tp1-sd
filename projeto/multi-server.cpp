@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h> 
 #include <stdlib.h> 
@@ -14,8 +13,6 @@ using namespace std;
 void *connection_handler(void *);
 
 void readFile(char *name, char *res);
-
-char* fileName (char* fileName, int min_str );
  
 int main(int argc , char *argv[]) {
 
@@ -82,7 +79,32 @@ void *connection_handler(void *socket_desc) {
    
     int sock = *(int*)socket_desc;
     int read_size;
-    char serverReply[10000] , client_cmd[5000], redirect[30] = " 1>stdout.txt 2>stderr.txt";
+    char serverReply[10000] , client_cmd[5000], redirect[3000],
+        redirectOut[100], redirectErr[100], 
+        stOut[100], stErr[100], 
+        rmOut[100]="rm ", rmErr[100]="rm ", str[100];
+
+    /*define name file output*/
+    sprintf(str,"%p",socket_desc);
+    strcat(str, ".txt");//name of the file
+    cout << str << endl;
+    string aux(str);
+    
+    string stdOut = "stdOut-", stdErr="stdErr-", redStdOut = " 1> ", redStdErr = " 2> ";
+    stdErr+=aux;
+    stdOut+=aux;    
+    redStdOut += stdOut;    
+    redStdErr += stdErr;
+  
+  
+    strcat(redirectOut, redStdOut.c_str());
+    strcat(redirectErr, redStdErr.c_str());
+    strcat(redirect, redirectOut);
+    strcat(redirect, redirectErr);
+    strcat(stOut, stdOut.c_str());
+    strcat(stErr, stdErr.c_str());
+    strcat(rmOut, stdOut.c_str());
+    strcat(rmErr, stdErr.c_str());
 
     
     //Receive a message from client
@@ -97,14 +119,14 @@ void *connection_handler(void *socket_desc) {
 
         int sys = system(client_cmd);
         //define which file will read
-        (!sys) ? readFile("stdout.txt", serverReply) : readFile("stderr.txt", serverReply);
+        (!sys) ? readFile(stOut, serverReply) : readFile(stErr, serverReply);
         
         //Send the message back to client
         write(sock , serverReply , strlen(serverReply));
 
         //delete file
-        system("rm stdout.txt");
-        system("rm stderr.txt");
+        system(rmOut);
+        system(rmErr);
 
         //clear the message buffer
         memset(client_cmd, 0, 5000);
@@ -136,25 +158,4 @@ void readFile(char *name, char *res) {
         strcpy(res, aux.c_str());
         fclose(file);
     }
-}
-
-
-char* fileName (char* fileName, int min_str ) {
-
-    srand ( time(NULL ));
-    string chars = "aLMvwxfghijbcdelmnQRSTUVFGHpqrstuIJKkyzNOP234567WXYZ01oABCSED89";
-    string chars2 = "eMvwxf567WD8JKky9lmghijbcdZCSEz01RSTUVFGHpnQqrstuIoABNOP234XYaL";
-    string name;
-
-    int nt = chars.size();
-    int str;
-    
-    str = (rand() % min_str );
-    str += ( str < min_str ) ? min_str : 0;
-
-        
-    for (int i = 0; i < str; i++ ) 
-        name = (rand()%2) ? name += chars[ rand() % nt ] : name += chars2[ rand() % nt ];
-    name+=".txt";
-    strcpy(fileName, name.c_str());
 }
