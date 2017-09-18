@@ -40,65 +40,63 @@ int main(int argc , char *argv[]) {
         fclose(file);
     }
 
-    while(1) {
-    	if(argc < 2) {
-	        printf("[CLIENTE]: Enter command : ");
-	        getline(cin, aux);
-    	} else {
-    		aux = argv[2];
-    	}
+	if(argc < 2) {
+        printf("[CLIENTE]: Enter command : ");
+        getline(cin, aux);
+	} else {
+		aux = argv[2];
+	}
 
-        //finish execution
-        if(aux =="exit2")
-            break;
+    //finish execution
+    //if(aux =="exit2")
+    //   break;
 
-        strcpy(cmd, aux.c_str());
-        cout << cmd << endl;
+    strcpy(cmd, aux.c_str());
+    cout << cmd << endl;
 
-        //connect with servers avaliables
-        for(int i=0; i<servers.size(); i++) {
-            cout << "\n[CLIENTE]: Server ip: " << servers[i].first << " port: " << servers[i].second << " sock: "<< sock << endl;
-            
-            //Create socket
-            createSocket(&sock);
+    //connect with servers avaliables
+    for(int i=0; i<servers.size(); i++) {
+        cout << "\n[CLIENTE]: Server ip: " << servers[i].first << " port: " << servers[i].second << " sock: "<< sock << endl;
+        
+        //Create socket
+        createSocket(&sock);
 
-            //clear structs
-            bzero((char *) &server, sizeof(server));
+        //clear structs
+        bzero((char *) &server, sizeof(server));
 
-            server.sin_addr.s_addr = inet_addr( servers[i].first );
-            server.sin_family = AF_INET;
-            server.sin_port = htons( servers[i].second );
-         
-            //Connect to remote server
-            if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
-                perror("[CLIENTE]: Connect failed with server. Error\n");
-                //continue;//accepts server failure
-                return 1;
-            }
-             
-            puts("[CLIENTE]: Connected\n");
-            
-            t1 = clock();
-            if( send(sock , cmd , strlen(cmd) , 0) < 0) {
-                puts("[CLIENTE]: Send failed");
-                return 1;
-            }
-
-            //Receive a reply from the server
-            if( recv(sock , server_reply , 2000 , 0) < 0) {
-                puts("[CLIENTE]: recv failed");
-                break;
-            }
-            t2 = clock();
-            
-            double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
-            puts("[CLIENTE]: Server reply :");
-            cout << server_reply << endl;
-            memset(server_reply,0,2000);
-             
-            close(sock);
-            cout << "[CLIENTE]: Latency time: " << timeT <<"s"<< endl;
+        server.sin_addr.s_addr = inet_addr( servers[i].first );
+        server.sin_family = AF_INET;
+        server.sin_port = htons( servers[i].second );
+     
+        //Connect to remote server
+        if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
+            perror("[CLIENTE]: Connect failed with server. Error\n");
+            //continue;//accepts server failure
+            return 1;
         }
+         
+        puts("[CLIENTE]: Connected\n");
+        
+        t1 = clock();
+        if( send(sock , cmd , strlen(cmd) , 0) < 0) {
+            puts("[CLIENTE]: Send failed");
+            return 1;
+        }
+
+        //Receive a reply from the server
+        if( recv(sock , server_reply , 2000 , 0) < 0) {
+            puts("[CLIENTE]: recv failed");
+            break;
+        }
+        t2 = clock();
+        
+        double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
+        puts("[CLIENTE]: Server reply :");
+        cout << server_reply << endl;
+        memset(server_reply,0,2000);
+         
+        close(sock);
+        cout << "[CLIENTE]: Latency time: " << timeT <<"s"<< endl;
     }
 
     return 0;
