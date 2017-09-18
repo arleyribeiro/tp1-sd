@@ -68,8 +68,8 @@ int main(int argc , char *argv[]) {
             //Connect to remote server
             if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
                 perror("Connect failed with server. Error\n");
-                continue;//accepts server failure
-                //return 1;
+                //continue;//accepts server failure
+                return 1;
             }
              
             puts("Connected\n");

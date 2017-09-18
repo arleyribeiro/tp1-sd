@@ -31,7 +31,7 @@ int main(int argc , char *argv[]) {
     if (socket_desc == -1) {
         printf("Could not create socket");
     }
-    puts("Socket created");
+    puts("Socket server created");
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
