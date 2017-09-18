@@ -9,6 +9,7 @@
 
 using namespace std;
 
+int port;
 
 void *connection_handler(void *);
 
@@ -16,22 +17,22 @@ void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
 
+    port = atoi(argv[1]);
+
     if(argc < 2) {
-        printf("[SERVIDOR]: Usage: ./server PORT\n");
+        printf("[SERVIDOR %i]: Usage: ./server PORT\n", port);
         exit (EXIT_FAILURE);
     }
 
     int socket_desc , client_sock , c;
     struct sockaddr_in server , client;
-
-    int port = atoi(argv[1]);
      
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if (socket_desc == -1) {
-        printf("[SERVIDOR]: Could not create socket");
+        printf("[SERVIDOR %i]: Could not create socket\n", port);
     }
-    puts("[SERVIDOR]: Socket server created");
+    printf("[SERVIDOR %i]: Socket server created\n", port);
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
@@ -44,18 +45,18 @@ int main(int argc , char *argv[]) {
         perror("[SERVIDOR]: bind failed. Error");
         return 1;
     }
-    puts("[SERVIDOR]: bind done");
+    printf("[SERVIDOR %i]: bind done\n", port);
      
     //Listen
     listen(socket_desc , 3);
           
     //Accept and incoming connection
-    puts("[SERVIDOR]: Waiting for incoming connections...");
+    printf("[SERVIDOR %i]: Waiting for incoming connections...\n", port);
     c = sizeof(struct sockaddr_in);
     pthread_t thread_id;
     
     while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
-        puts("[SERVIDOR]: Connection accepted");
+        printf("[SERVIDOR %i]: Connection accepted\n", port);
         
         if( pthread_create( &thread_id , NULL ,  connection_handler , (void*) &client_sock) < 0) {
             perror("[SERVIDOR]: could not create thread");
@@ -64,7 +65,7 @@ int main(int argc , char *argv[]) {
          
         //Now join the thread , so that we dont terminate before the thread
         pthread_join( thread_id , NULL);
-        puts("[SERVIDOR]: Handler assigned\n");
+        printf("[SERVIDOR %i]: Handler assigned\n", port);
     }
      
     if (client_sock < 0) {
@@ -87,7 +88,7 @@ void *connection_handler(void *socket_desc) {
     /*define name file output*/
     sprintf(str,"%p",socket_desc);
     strcat(str, ".txt");//name of the file
-    cout << "[SERVIDOR]: " << str << endl;
+    cout << "[SERVIDOR " << port << "]: " << str << endl;
     string aux(str);
     
     string stdOut = "stdOut-", stdErr="stdErr-", redStdOut = " 1> ", redStdErr = " 2> ";
@@ -112,7 +113,7 @@ void *connection_handler(void *socket_desc) {
         
         client_cmd[read_size] = '\0';
 
-        cout << "[SERVIDOR]: Client Command: " << client_cmd << endl;
+        cout << "[SERVIDOR " << port << "]: Client Command: " << client_cmd << endl;
        
         //concat client cmd and redirect
         strcat(client_cmd, redirect);
@@ -134,7 +135,7 @@ void *connection_handler(void *socket_desc) {
     }
      
     if(read_size == 0) {
-        puts("[SERVIDOR]: Client disconnected");
+        printf("[SERVIDOR %i]: Client disconnected\n", port);
         fflush(stdout);
     }
     else if(read_size == -1) {
