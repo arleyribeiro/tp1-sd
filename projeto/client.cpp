@@ -15,7 +15,7 @@ int createSocket(int *sock);
 int main(int argc , char *argv[]) {
 
     if(argc < 2) {
-        printf("Usage: ./client list_of_servers.txt\n");
+        printf("[CLIENTE]: Usage: ./client list_of_servers.txt\n");
         exit (EXIT_FAILURE);
     }
 
@@ -41,8 +41,12 @@ int main(int argc , char *argv[]) {
     }
 
     while(1) {
-        printf("Enter command : ");
-        getline(cin, aux);
+    	if(argc < 2) {
+	        printf("[CLIENTE]: Enter command : ");
+	        getline(cin, aux);
+    	} else {
+    		aux = argv[2];
+    	}
 
         //finish execution
         if(aux =="exit2")
@@ -53,7 +57,7 @@ int main(int argc , char *argv[]) {
 
         //connect with servers avaliables
         for(int i=0; i<servers.size(); i++) {
-            cout << "\nServer ip: " << servers[i].first << " port: " << servers[i].second << " sock: "<< sock << endl;
+            cout << "\n[CLIENTE]: Server ip: " << servers[i].first << " port: " << servers[i].second << " sock: "<< sock << endl;
             
             //Create socket
             createSocket(&sock);
@@ -67,33 +71,33 @@ int main(int argc , char *argv[]) {
          
             //Connect to remote server
             if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
-                perror("Connect failed with server. Error\n");
+                perror("[CLIENTE]: Connect failed with server. Error\n");
                 //continue;//accepts server failure
                 return 1;
             }
              
-            puts("Connected\n");
+            puts("[CLIENTE]: Connected\n");
             
             t1 = clock();
             if( send(sock , cmd , strlen(cmd) , 0) < 0) {
-                puts("Send failed");
+                puts("[CLIENTE]: Send failed");
                 return 1;
             }
 
             //Receive a reply from the server
             if( recv(sock , server_reply , 2000 , 0) < 0) {
-                puts("recv failed");
+                puts("[CLIENTE]: recv failed");
                 break;
             }
             t2 = clock();
             
             double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
-            puts("Server reply :");
+            puts("[CLIENTE]: Server reply :");
             cout << server_reply << endl;
             memset(server_reply,0,2000);
              
             close(sock);
-            cout << "Latency time: " << timeT <<"s"<< endl;
+            cout << "[CLIENTE]: Latency time: " << timeT <<"s"<< endl;
         }
     }
 
@@ -113,7 +117,7 @@ void createServers(char *name, vector< pair<char*, int> > &servers) {
             host.first = IP;
             host.second = PORT;
             servers.push_back(host);
-            cout <<"server " <<  servers[i].first << " ip " <<servers[i].second << endl;
+            cout <<"[CLIENTE]: server " <<  servers[i].first << " ip " <<servers[i].second << endl;
             i++;
         }
         fclose(file);
@@ -125,7 +129,7 @@ int createSocket(int *sock) {
     
     *sock = socket(AF_INET , SOCK_STREAM , 0);
     if (*sock == -1) {
-        printf("Could not create socket");
+        printf("[CLIENTE]: ould not create socket");
     }
-    puts("Socket created");
+    puts("[CLIENTE]: Socket created");
 }

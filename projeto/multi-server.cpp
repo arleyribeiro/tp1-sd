@@ -17,7 +17,7 @@ void readFile(char *name, char *res);
 int main(int argc , char *argv[]) {
 
     if(argc < 2) {
-        printf("Usage: ./server PORT\n");
+        printf("[SERVIDOR]: Usage: ./server PORT\n");
         exit (EXIT_FAILURE);
     }
 
@@ -29,9 +29,9 @@ int main(int argc , char *argv[]) {
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if (socket_desc == -1) {
-        printf("Could not create socket");
+        printf("[SERVIDOR]: Could not create socket");
     }
-    puts("Socket server created");
+    puts("[SERVIDOR]: Socket server created");
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
@@ -41,34 +41,34 @@ int main(int argc , char *argv[]) {
     //Bind
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0) {
         //print the error message
-        perror("bind failed. Error");
+        perror("[SERVIDOR]: bind failed. Error");
         return 1;
     }
-    puts("bind done");
+    puts("[SERVIDOR]: bind done");
      
     //Listen
     listen(socket_desc , 3);
           
     //Accept and incoming connection
-    puts("Waiting for incoming connections...");
+    puts("[SERVIDOR]: Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
     pthread_t thread_id;
     
     while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
-        puts("Connection accepted");
+        puts("[SERVIDOR]: Connection accepted");
         
         if( pthread_create( &thread_id , NULL ,  connection_handler , (void*) &client_sock) < 0) {
-            perror("could not create thread");
+            perror("[SERVIDOR]: could not create thread");
             return 1;
         }
          
         //Now join the thread , so that we dont terminate before the thread
         pthread_join( thread_id , NULL);
-        puts("Handler assigned\n");
+        puts("[SERVIDOR]: Handler assigned\n");
     }
      
     if (client_sock < 0) {
-        perror("accept failed");
+        perror("[SERVIDOR]: accept failed");
         return 1;
     }
      
@@ -87,7 +87,7 @@ void *connection_handler(void *socket_desc) {
     /*define name file output*/
     sprintf(str,"%p",socket_desc);
     strcat(str, ".txt");//name of the file
-    cout << str << endl;
+    cout << "[SERVIDOR]: " << str << endl;
     string aux(str);
     
     string stdOut = "stdOut-", stdErr="stdErr-", redStdOut = " 1> ", redStdErr = " 2> ";
@@ -112,7 +112,7 @@ void *connection_handler(void *socket_desc) {
         
         client_cmd[read_size] = '\0';
 
-        cout << "Client Command: " << client_cmd << endl;
+        cout << "[SERVIDOR]: Client Command: " << client_cmd << endl;
        
         //concat client cmd and redirect
         strcat(client_cmd, redirect);
@@ -134,11 +134,11 @@ void *connection_handler(void *socket_desc) {
     }
      
     if(read_size == 0) {
-        puts("Client disconnected");
+        puts("[SERVIDOR]: Client disconnected");
         fflush(stdout);
     }
     else if(read_size == -1) {
-        perror("recv failed");
+        perror("[SERVIDOR]: recv failed");
     }
 
     close(sock);
