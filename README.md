@@ -14,19 +14,26 @@ Prof. Anolan Barrientos <br />
 
 ## 2 Desenvolvimento da aplicação
 
-## 3 Ambiente de Execução
 
-Para executar siga os passos abaixo:
+## 3 AMBIENTE DE EXECUÇÃO UTILIZADO
 
-Navegue até a pasta projeto
+Desenvolveu-se o projeto na máquina virtual VirtualBox 5.1.28 com o sistema operacional Linux mint 17.3 Cinnamon OEM (64 bits versão Ubuntu). O compilador utilizado foi o g++. Para instalá-lo, deve-se executar o comando abaixo no terminal.
 
-Execute o servidor no terminal de cada máquina com um número de porta diferente.
+`$ sudo apt-get install g++`
+
+Para executar os servidores, deve-se rodar o comando abaixo em cada uma das máquinas dentro do diretório correspondente.
 
 `$ g++ multi-server.cpp -w -lpthread -o server`
 
-`$ ./server PORTA`
+`$ ./server 8880`
 
-Adicione o IP e PORTA do servido em um arquivo.txt, sendo um servidor por linha.
+Para executar o cliente, deve-se rodar o comando abaixo em uma máquina qualquer, tomando como base que há um arquivo “servidores.txt” que possui, em cada linha, o endereço IP seguido da porta dos servidores.
+
+`$ g++ client.cpp -w -o client`
+
+`$ ./client servidores.txt comando_grep`
+
+### 2.1 Servidores.txt
 
 ```
 127.0.0.1 8880 
@@ -35,12 +42,6 @@ Adicione o IP e PORTA do servido em um arquivo.txt, sendo um servidor por linha.
 127.0.0.1 8883
 127.0.0.1 8884 
 ```
-
-Em outro terminal execute o cliente.
-
-`$ g++ client.cpp -o client`
-
-`$./client lista_de_servidores.txt`
 
 ## 4 Resultados
 
