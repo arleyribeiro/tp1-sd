@@ -17,59 +17,61 @@ void readFile(char *name, char *res);
  
 int main(int argc , char *argv[]) {
 
-    port = atoi(argv[1]);
-
+    //Se não houver entrada de argumento via terminal
     if(argc < 2) {
-        printf("[SERVIDOR %i]: Usage: ./server PORT\n", port);
+        printf("[SERVIDOR]: Forma de uso: ./server PORT\n");
         exit (EXIT_FAILURE);
     }
 
-    int socket_desc , client_sock , c;
-    struct sockaddr_in server , client;
+    int socket_desc; //Socket utilizado pelo servidor para escuta
+    int client_sock; //Socket recebido do cliente para comunicação
+    int c = sizeof(struct sockaddr_in); //Armazenará tamanho da estrutura 'sockaddr_in'
+    struct sockaddr_in server;
+    struct client;
+    pthread_t thread_id;
+    port = atoi(argv[1]); //Porta de escuta do servidor recebido via terminal
      
-    //Create socket
+    //Criação de socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if (socket_desc == -1) {
-        printf("[SERVIDOR %i]: Could not create socket\n", port);
+        printf("[SERVIDOR %i]: Socket não pode ser criado\n", port);
     }
-    printf("[SERVIDOR %i]: Socket server created\n", port);
+    printf("[SERVIDOR %i]: Socket criado\n", port);
      
-    //Prepare the sockaddr_in structure
+    //Prepara a estrutura 'sockaddr_in'
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons( port );
+    server.sin_port = htons(port);
      
     //Bind
-    if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0) {
-        //print the error message
-        perror("[SERVIDOR]: bind failed. Error");
+    if(bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0) {
+        perror("[SERVIDOR]: Erro ao aplicar 'bind'");
         return 1;
     }
-    printf("[SERVIDOR %i]: bind done\n", port);
+    printf("[SERVIDOR %i]: Bind concluído\n", port);
      
-    //Listen
+    //Início do processo de escuta
     listen(socket_desc , 3);
-          
-    //Accept and incoming connection
-    printf("[SERVIDOR %i]: Waiting for incoming connections...\n", port);
-    c = sizeof(struct sockaddr_in);
-    pthread_t thread_id;
+    printf("[SERVIDOR %i]: Aguardando por requisições de conexão...\n", port);
     
+    //Chegada e aceitação de conexão
     while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
-        printf("[SERVIDOR %i]: Connection accepted\n", port);
+        printf("[SERVIDOR %i]: Conexão aceita\n", port);
         
+        //Criação de thread para atender requisição
         if( pthread_create( &thread_id , NULL ,  connection_handler , (void*) &client_sock) < 0) {
-            perror("[SERVIDOR]: could not create thread");
+            perror("[SERVIDOR]: Não foi possível criar a thread");
             return 1;
         }
          
-        //Now join the thread , so that we dont terminate before the thread
-        pthread_join( thread_id , NULL);
-        printf("[SERVIDOR %i]: Handler assigned\n", port);
+        //Junta-se à thread de forma que o processo não termine antes do que ela
+        pthread_join(thread_id , NULL);
+        printf("[SERVIDOR %i]: Thread designada\n", port);
     }
      
+    //Erro ao obter socket do cliente
     if (client_sock < 0) {
-        perror("[SERVIDOR]: accept failed");
+        perror("[SERVIDOR]: Aceitação de conexão falhou");
         return 1;
     }
      
@@ -78,16 +80,23 @@ int main(int argc , char *argv[]) {
  
 void *connection_handler(void *socket_desc) {
    
-    int sock = *(int*)socket_desc;
+    int sock = *(int*)socket_desc; //Socket do cliente
     int read_size;
-    char serverReply[10000] , client_cmd[5000], redirect[3000],
-        redirectOut[100], redirectErr[100], 
-        stOut[100], stErr[100], 
-        rmOut[100]="rm ", rmErr[100]="rm ", str[100];
+    int sys; //Armazenará estado da consulta do comando do cliente (com ou sem sucesso)
+    char serverReply[10000]; //Resultado da busca do cliente obtido por este servidor
+    char client_cmd[5000]; //Comando oriundo do cliente
+    char redirect[3000];
+    char redirectOut[100];
+    char redirectErr[100];
+    char stOut[100];
+    char stErr[100];
+    char rmOut[100]="rm "; 
+    char rmErr[100]="rm ";
+    char str[100]; //Armazenará o nome do arquivo de saída
 
-    /*define name file output*/
+    //Define-se o nome do arquivo de saída
     sprintf(str,"%p",socket_desc);
-    strcat(str, ".txt");//name of the file
+    strcat(str, ".txt");
     cout << "[SERVIDOR " << port << "]: " << str << endl;
     string aux(str);
     
@@ -108,40 +117,44 @@ void *connection_handler(void *socket_desc) {
     strcat(rmErr, stdErr.c_str());
 
     
-    //Receive a message from client
+    //Recebe mensagem do cliente
     while( (read_size = recv(sock , client_cmd , 2000 , 0)) > 0 ) {
         
-        client_cmd[read_size] = '\0';
+        //Limita-se o vetor
+        client_cmd[read_size] = '\0'; 
 
-        cout << "[SERVIDOR " << port << "]: Client Command: " << client_cmd << endl;
+        cout << "[SERVIDOR " << port << "]: Comando do cliente: " << client_cmd << endl;
        
-        //concat client cmd and redirect
+        //Concatena o comando do cliente com a variável 'redirect'
         strcat(client_cmd, redirect);
 
-        int sys = system(client_cmd);
-        //define which file will read
+        //Executa-se o comando do cliente
+        sys = system(client_cmd);
+
+        //Define-se qual arquivo será lido
         (!sys) ? readFile(stOut, serverReply) : readFile(stErr, serverReply);
         
-        //Send the message back to client
+        //Responde o cliente
         write(sock , serverReply , strlen(serverReply));
 
-        //delete file
+        //Deleta-se os arquivos
         system(rmOut);
         system(rmErr);
 
-        //clear the message buffer
+        //Limpa-se os buffers
         memset(client_cmd, 0, 5000);
         memset(serverReply, 0, 10000);
     }
      
     if(read_size == 0) {
-        printf("[SERVIDOR %i]: Client disconnected\n", port);
+        printf("[SERVIDOR %i]: Cliente desconectou\n", port);
         fflush(stdout);
     }
     else if(read_size == -1) {
-        perror("[SERVIDOR]: recv failed");
+        perror("[SERVIDOR]: Falha ao executar 'recv'");
     }
 
+    //Encerra o socket
     close(sock);
          
     return 0;
