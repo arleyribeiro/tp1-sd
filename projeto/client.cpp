@@ -93,24 +93,23 @@ int main(int argc , char *argv[]) {
             //Envio de mensagem para o servidor
             if( send(sock , cmd , strlen(cmd) , 0) < 0) {
                 puts("[CLIENTE]: Envio falhou");
-            } else {
+            } 
 
-                //Recebe resposta do servidor
-                if( recv(sock , server_reply , 2000 , 0) < 0) {
-                    puts("[CLIENTE]: Falha ao executar 'recv'");
-                } else {
-                    //Bloco de sucesso: nada falhou!
-                    t2 = clock(); //Armazena-se tempo de fim
-                    
-                    //Calcula-se tempo de duração da conversa
-                    double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
-                    cout << "[CLIENTE]: Resposta do servidor: " << server_reply << endl;
-                    memset(server_reply,0,10000); //Enche o vetor server_reply com 2 mil zeros
-                     
-                    close(sock); //Fecha-se o socket
-                    cout << "[CLIENTE]: Tempo de latência: " << timeT <<"s"<< endl;
-                }
-            }
+            //Recebe resposta do servidor
+            if( recv(sock , server_reply , 2000 , 0) < 0) {
+                puts("[CLIENTE]: Falha ao executar 'recv'");
+            } else {
+                //Bloco de sucesso: nada falhou!
+                t2 = clock(); //Armazena-se tempo de fim
+                
+                //Calcula-se tempo de duração da conversa
+                double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
+                cout << "[CLIENTE]: Resposta do servidor: " << server_reply << endl;
+                memset(server_reply,0,10000); //Enche o vetor server_reply com 2 mil zeros
+                 
+                close(sock); //Fecha-se o socket
+                cout << "[CLIENTE]: Tempo de latência: " << timeT <<"s"<< endl;
+            }            
         }
     }
 
