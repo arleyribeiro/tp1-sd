@@ -20,7 +20,7 @@ sleep 2
 
 echo -e "\n[SCRIPT]: Iniciando [Cliente]" 
 g++ client.cpp -o client 
-./client "servidores.txt" 'grep "usb_bluetooth" ./log/maquina.2.log | head -1'
+./client "servidores.txt" 'grep "usb_bluetooth" log.log | head -1'
 sleep 10
 
 echo -e "\n\n[SCRIPT]:					FIM\n\n\n"
