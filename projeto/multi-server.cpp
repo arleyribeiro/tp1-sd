@@ -130,16 +130,18 @@ void *connection_handler(void *socket_desc) {
        
         //Concatena o comando do cliente com a variável 'redirect'
         strcat(client_cmd, redirect);
-        cout << "oi1" << endl;
+
         //Executa-se o comando do cliente
         sys = system(client_cmd);
-cout << "oi2" << endl;
+
         //Define-se qual arquivo será lido
         (!sys) ? readFile(stOut, serverReply) : readFile(stErr, serverReply);
-        cout << "oi3" << endl;
+        
+        if(strlen(serverReply) == 0)
+            strcat(serverReply, "Não há resultados relacionados!");
         //Responde o cliente
         write(sock , serverReply , strlen(serverReply));
-cout << "oi4" << endl;
+
         //Deleta-se os arquivos
         system(rmOut);
         system(rmErr);
