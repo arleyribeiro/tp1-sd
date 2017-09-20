@@ -3,7 +3,6 @@
 ENGENHARIA DE COMPUTAÇÃO <br />
 Sistemas Distribuídos <br />
 Prof. Anolan Barrientos <br />
-Alunos: Arley dos Santos Ribeiro, Bruno Marques Maciel, Cassiano de Brito Andrade
 2017-2**
 
 # Trabalho Prático 1: Comunicação
