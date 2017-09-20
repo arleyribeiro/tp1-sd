@@ -27,7 +27,7 @@ int main(int argc , char *argv[]) {
     char IP[25];
     char server_reply[10000];
     string aux;
-    clock_t t1; 
+    clock_t t1; //variáveis para medir tempo de latência
     clock_t t2;
     pair<char*, int> host; //Composto de 'endereço IP' e 'porta'
     vector< pair<char*, int> > servers; //Vetor onde cada elemento possui 'endereço IP' e 'porta'
@@ -97,7 +97,7 @@ int main(int argc , char *argv[]) {
                     //Calcula-se tempo de duração da conversa
                     double timeT = (((double)t2 - (double)t1)/(double)CLOCKS_PER_SEC);
                     cout << "[CLIENTE]: Resposta do servidor: " << server_reply << endl;
-                    memset(server_reply,0,2000); //Enche o vetor server_reply com 2 mil zeros
+                    memset(server_reply,0,10000); //Enche o vetor server_reply com 2 mil zeros
                      
                     close(sock); //Fecha-se o socket
                     cout << "[CLIENTE]: Tempo de latência: " << timeT <<"s"<< endl;
