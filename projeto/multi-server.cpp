@@ -81,7 +81,7 @@ int main(int argc , char *argv[]) {
 void *connection_handler(void *socket_desc) {
    
     int sock = *(int*)socket_desc; //Socket do cliente
-    int read_size;
+    int read_size; //Variável para definir recebeu a mensagem
     int sys; //Armazenará estado da consulta do comando do cliente (com ou sem sucesso)
     char serverReply[10000]; //Resultado da busca do cliente obtido por este servidor
     char client_cmd[5000]; //Comando oriundo do cliente
@@ -97,12 +97,15 @@ void *connection_handler(void *socket_desc) {
     //Define-se o nome do arquivo de saída
     sprintf(str,"%p",socket_desc);
     strcat(str, ".txt");
-    cout << "[SERVIDOR " << port << "]: " << str << endl;
+   // cout << "[SERVIDOR " << port << "]: " << str << endl;
     string aux(str);
     
-    string stdOut = "stdOut-", stdErr="stdErr-", redStdOut = " 1> ", redStdErr = " 2> ";
-    stdErr+=aux;
-    stdOut+=aux;    
+    //Prefixos para os arquivos
+    string stdOut = "stdOut-", stdErr="stdErr-", 
+    //prefixo par redirecionamento
+    redStdOut = " 1> ", redStdErr = " 2> ";
+    stdErr+=aux;//nome do arquivo com resultado da saída de erro padrão.
+    stdOut+=aux;//nome do arquivo com resultado da saída padrão.
     redStdOut += stdOut;    
     redStdErr += stdErr;
   
@@ -113,8 +116,8 @@ void *connection_handler(void *socket_desc) {
     strcat(redirect, redirectErr);
     strcat(stOut, stdOut.c_str());
     strcat(stErr, stdErr.c_str());
-    strcat(rmOut, stdOut.c_str());
-    strcat(rmErr, stdErr.c_str());
+    strcat(rmOut, stdOut.c_str());//comando para deletar arquivos criados
+    strcat(rmErr, stdErr.c_str());//comando para deletar arquivos criados
 
     
     //Recebe mensagem do cliente
@@ -123,7 +126,7 @@ void *connection_handler(void *socket_desc) {
         //Limita-se o vetor
         client_cmd[read_size] = '\0'; 
 
-        cout << "[SERVIDOR " << port << "]: Comando do cliente: " << client_cmd << endl;
+        cout << "[SERVIDOR " << port << "]: Comando a ser executado: " << client_cmd << endl;
        
         //Concatena o comando do cliente com a variável 'redirect'
         strcat(client_cmd, redirect);
