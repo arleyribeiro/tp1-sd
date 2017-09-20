@@ -1,23 +1,26 @@
-echo -e "\n[SCRIPT]: Iniciando [Servidor:8880]" 
+PORTA_SERVIDOR_1=8880
+PORTA_SERVIDOR_2=8881
+
+echo -e "\n[SCRIPT]: Iniciando [Servidor:$PORTA_SERVIDOR_1]" 
 g++ multi-server.cpp -w -lpthread -o server
-./server 8880 &
+./server $PORTA_SERVIDOR_1 &
 sleep 2
 
-echo -e "\n[SCRIPT]: Iniciando [Servidor:8881]" 
-./server 8881 &
+echo -e "\n[SCRIPT]: Iniciando [Servidor:$PORTA_SERVIDOR_2]" 
+./server $PORTA_SERVIDOR_2 &
 sleep 2
 
 echo -e "\n[SCRIPT]: Criando arquivo com listagem de servidores"
 rm -f "servidores.txt"
 cat > "servidores.txt" << EOF1
-127.0.0.1 8880
-127.0.0.1 8881
+127.0.0.1 $PORTA_SERVIDOR_1
+127.0.0.1 $PORTA_SERVIDOR_2
 EOF1
 sleep 2
 
 echo -e "\n[SCRIPT]: Iniciando [Cliente]" 
 g++ client.cpp -o client 
-./client "servidores.txt" 'grep "host" *'
+./client "servidores.txt" 'grep "usb_bluetooth" ./log/maquina.2.log | head -1'
 sleep 10
 
 echo -e "\n\n[SCRIPT]:					FIM\n\n\n"
