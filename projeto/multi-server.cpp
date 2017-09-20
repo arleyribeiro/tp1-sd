@@ -27,7 +27,7 @@ int main(int argc , char *argv[]) {
     int client_sock; //Socket recebido do cliente para comunicação
     int c = sizeof(struct sockaddr_in); //Armazenará tamanho da estrutura 'sockaddr_in'
     struct sockaddr_in server;
-    struct client;
+    struct sockaddr_in client;
     pthread_t thread_id;
     port = atoi(argv[1]); //Porta de escuta do servidor recebido via terminal
      
@@ -44,7 +44,7 @@ int main(int argc , char *argv[]) {
     server.sin_port = htons(port);
      
     //Bind
-    if(bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0) {
+    if(bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0) {
         perror("[SERVIDOR]: Erro ao aplicar 'bind'");
         return 1;
     }
@@ -53,13 +53,13 @@ int main(int argc , char *argv[]) {
     //Início do processo de escuta
     listen(socket_desc , 3);
     printf("[SERVIDOR %i]: Aguardando por requisições de conexão...\n", port);
-    
+
     //Chegada e aceitação de conexão
     while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
         printf("[SERVIDOR %i]: Conexão aceita\n", port);
         
         //Criação de thread para atender requisição
-        if( pthread_create( &thread_id , NULL ,  connection_handler , (void*) &client_sock) < 0) {
+        if( pthread_create( &thread_id, NULL,  connection_handler, (void*) &client_sock) < 0) {
             perror("[SERVIDOR]: Não foi possível criar a thread");
             return 1;
         }
