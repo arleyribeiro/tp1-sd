@@ -12,6 +12,12 @@ void createServers(char *name, vector< pair<char*, int> > &servers);
 
 int createSocket(int *sock); 
 
+//Composto de 'endereço IP' e 'porta'
+typedef struct a{
+	char IP[25];
+	int PORT;
+}HOST;
+
 int main(int argc , char *argv[]) {
 
     //Se a quantidade de parâmetros via terminal for insuficiente
@@ -29,17 +35,19 @@ int main(int argc , char *argv[]) {
     string aux;
     clock_t t1; //variáveis para medir tempo de latência
     clock_t t2;
-    pair<char*, int> host; //Composto de 'endereço IP' e 'porta'
-    vector< pair<char*, int> > servers; //Vetor onde cada elemento possui 'endereço IP' e 'porta'
+   
+    vector< HOST > servers; //Vetor onde cada elemento possui 'endereço IP' e 'porta'
     FILE *file;  //Utilizado para ler o arquivo de servidores
 
     //Lê do arquivo os dados dos servidores
     file = fopen(argv[1], "r");
     if (file) {
         string aux;
+        int i=0;
         while(fscanf(file, "%s %d", IP, &PORT) != EOF){
-            host.first = IP;
-            host.second = PORT;
+            HOST host;
+            strcpy(host.IP,IP);
+            host.PORT = PORT;
             servers.push_back(host);
         }
         fclose(file);
@@ -60,7 +68,7 @@ int main(int argc , char *argv[]) {
     //Percorre-se por todos os servidores disponíveis
     for(int i=0; i<servers.size(); i++) {
         cout << "\n[CLIENTE]: Tentativa de conexão";
-        cout << "\n[CLIENTE]: Endereço IP: " << servers[i].first << " Porta: " << servers[i].second << " Socket: "<< sock << endl;
+        cout << "\n[CLIENTE]: Endereço IP: " << servers[i].IP << " Porta: " << servers[i].PORT << " Socket: "<< sock << endl;
         
         //Cria-se o socket
         createSocket(&sock);
@@ -69,9 +77,9 @@ int main(int argc , char *argv[]) {
         bzero((char *) &server, sizeof(server));
 
         //Define-se dados da conexão
-        server.sin_addr.s_addr = inet_addr( servers[i].first );
+        server.sin_addr.s_addr = inet_addr( servers[i].IP );
         server.sin_family = AF_INET;
-        server.sin_port = htons( servers[i].second );
+        server.sin_port = htons( servers[i].PORT );
      
         //Tentativa de conexão com servidor remoto
         if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
@@ -110,6 +118,7 @@ int main(int argc , char *argv[]) {
 }
 
 /*não está funcionando a passagem do IP está bugada*/
+/*
 void createServers(char *name, vector< pair<char*, int> > &servers) {
     char IP[25];
     char cmd[25];
@@ -120,17 +129,17 @@ void createServers(char *name, vector< pair<char*, int> > &servers) {
     if (file) {
         string aux;
         while(fscanf(file, "%s %d", IP, &PORT) != EOF){
-            host.first = IP;
-            host.second = PORT;
+            host.IP = IP;
+            host.PORT = PORT;
             servers.push_back(host);
-            cout <<"[CLIENTE]: server " <<  servers[i].first << " ip " <<servers[i].second << endl;
+            cout <<"[CLIENTE]: server " <<  servers[i].IP << " ip " <<servers[i].PORT << endl;
             i++;
         }
         fclose(file);
         dup2(0, 3);
     }
 }
-
+*/
 int createSocket(int *sock) {
     
     *sock = socket(AF_INET , SOCK_STREAM , 0);
